@@ -23,9 +23,10 @@ namespace CoreBank.Controllers
 
         // GET api/users
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<List<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            return _userService.GetAll().Select(x => x.Username).ToList();
+            //return new string[] { "value1", "value2" };
         }
 
         // GET api/users/id

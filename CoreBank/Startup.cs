@@ -28,7 +28,7 @@ namespace CoreBank
             services.AddScoped(typeof(IService<>), typeof(Service<>));
             services.AddScoped<DbContext, MainDbContext>();
 
-            var connection = @"Server=(localdb)\mssqllocaldb;Database=MainDB;Trusted_Connection=True;ConnectRetryCount=0";
+            var connection = @"Server=RYAN\SQLEXPRESS01;Database=MainDb;User Id=test;Password=test;";
             services.AddDbContext<MainDbContext>(options => options.UseSqlServer(connection));
         }
 

@@ -10,7 +10,7 @@ namespace BusinessLogic.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly MainDbContext _context;
+        protected MainDbContext _context;
 
         public Repository(MainDbContext context)
         {

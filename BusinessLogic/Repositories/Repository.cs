@@ -37,21 +37,25 @@ namespace BusinessLogic.Repositories
         public void Add(T entity)
         {
             _dbSet.Add(entity);
+            _context.SaveChanges();
         }
 
         public void AddRange(List<T> entities)
         {
             _dbSet.AddRange(entities);
+            _context.SaveChanges();
         }
 
         public void Remove(T entity)
         {
             _dbSet.Remove(entity);
+            _context.SaveChanges();
         }
 
         public void RemoveRange(List<T> entities)
         {
             _dbSet.RemoveRange(entities);
+            _context.SaveChanges();
         }
 
         public void Update(T entity)

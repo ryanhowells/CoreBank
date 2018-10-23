@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using BusinessLogic.Interfaces;
+using CoreBank.Dtos;
+using CoreBank.Factories;
+using DataAccessLayer.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using BusinessLogic.Interfaces;
-using CoreBank.Dtos;
-using DataAccessLayer.Models;
 
 namespace CoreBank.Controllers
 {
@@ -23,62 +21,81 @@ namespace CoreBank.Controllers
 
         // GET api/users
         [HttpGet]
-        public ActionResult<List<string>> Get()
+        public ActionResult Get()
         {
-            return _userService.GetAll().Select(x => x.Username).ToList();
-            //return new string[] { "value1", "value2" };
+            var users = _userService.GetAll().ToList();
+            if (users.Count > 0)
+                return Ok(users);
+            else
+                return NotFound("No Users Found.");
         }
 
         // GET api/users/id
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public ActionResult Get(int id)
         {
-            return _userService.Get(x => x.UserId == id).Username;
-                //return "value" + id;
+            var user = _userService.Get(x => x.UserId == id);
+            if (user != null)
+                return Ok(user);
+            else
+                return NotFound(string.Format("User with the Id: {0} Not Found.", id));
         }
 
         // POST api/users
         [HttpPost]
-        public void Post(UserDto userDto)
+        public ActionResult Post(UserDto userDto)
         {
-            var user = new User
+            var userFactory = new UserFactory(_userService);
+            var validationErrors = userFactory.Validate(userDto);
+
+            if (validationErrors.Count <= 0)
             {
-                UserId = userDto.Id,
-                AccountNumber = userDto.AccountNumber,
-                BankNumber = userDto.BankNumber,
-                Username = userDto.Username
-
-            };
-
-            _userService.Add(user);
+                var user = userFactory.InitialiseUser(userDto);
+                _userService.Add(user);
+                return Ok(user);
+            }
+            else
+                return BadRequest(validationErrors);
         }
 
         // PUT api/users/id
         [HttpPut("{id}")]
-        public void Put(int id, UserDto userDto)
+        public ActionResult Put(int id, UserDto userDto)
         {
-            var user = _userService.Get(x => x.UserId == id);
+            var userFactory = new UserFactory(_userService);
+            var validationErrors = userFactory.Validate(userDto);
 
-            if (user != null)
+            if (validationErrors.Count <= 0)
             {
-                user.AccountNumber = userDto.AccountNumber;
-                user.BankNumber = userDto.BankNumber;
-                user.Username = userDto.Username;
-            }
+                var user = _userService.Get(x => x.UserId == id);
 
-            _userService.Update(user);
+                if (user != null)
+                {
+                    user = userFactory.UpdateUserModelFromDto(userDto, user);
+
+                    _userService.Update(user);
+                    return Ok(user);
+                }
+                else
+                    return NotFound(string.Format("User with Id: {0} not found.", id));
+            }
+            else
+                return BadRequest(validationErrors);
         }
 
         // DELETE api/users/id
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
             var user = _userService.Get(x => x.UserId == id);
 
             if (user != null)
             {
                 _userService.Remove(user);
+                return Ok(string.Format("User with Id: {0} removed.", id));
             }
+            else
+                return NotFound(string.Format("User with Id: {0} not found.", id));
         }
     }
 }

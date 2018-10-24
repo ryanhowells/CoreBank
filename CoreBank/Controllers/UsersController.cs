@@ -1,7 +1,6 @@
 ﻿using BusinessLogic.Interfaces;
 using CoreBank.Dtos;
 using CoreBank.Factories;
-using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -23,6 +22,7 @@ namespace CoreBank.Controllers
         public ActionResult Get()
         {
             var users = _userService.GetAll().ToList();
+
             if (users.Count > 0)
                 return Ok(users);
             else
@@ -34,6 +34,7 @@ namespace CoreBank.Controllers
         public ActionResult Get(int id)
         {
             var user = _userService.Get(x => x.UserId == id);
+
             if (user != null)
                 return Ok(user);
             else
@@ -51,6 +52,7 @@ namespace CoreBank.Controllers
             {
                 var user = userFactory.InitialiseUser(userDto);
                 _userService.Add(user);
+
                 return Ok(user);
             }
             else
@@ -71,8 +73,8 @@ namespace CoreBank.Controllers
                 if (user != null)
                 {
                     user = userFactory.UpdateUserModelFromDto(userDto, user);
-
                     _userService.Update(user);
+
                     return Ok(user);
                 }
                 else
@@ -91,6 +93,7 @@ namespace CoreBank.Controllers
             if (user != null)
             {
                 _userService.Remove(user);
+
                 return Ok(string.Format("User with Id: {0} removed.", id));
             }
             else

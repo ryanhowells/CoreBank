@@ -22,7 +22,6 @@ namespace DataAccessLayer.Context
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["MainDb"].ConnectionString);
-
                 optionsBuilder.UseSqlServer(@"Server=RYAN\SQLEXPRESS01;Database=MainDb;User Id=test;Password=test;");
             }
         }

@@ -21,7 +21,7 @@ namespace CoreBank.Controllers
 
         // GET api/userAccounts/accountNumber
         [HttpGet("{accountNumber}")]
-        public ActionResult GetUsersAccount(int accountNumber)
+        public ActionResult Get(int accountNumber)
         {
             var userFactory = new UserFactory(_userService);
             var validationErrors = userFactory.ValidateRequest(accountNumber.ToString());

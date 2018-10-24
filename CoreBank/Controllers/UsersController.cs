@@ -3,7 +3,6 @@ using CoreBank.Dtos;
 using CoreBank.Factories;
 using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace CoreBank.Controllers
@@ -12,9 +11,9 @@ namespace CoreBank.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IService<User> _userService;
+        private readonly IUserService _userService;
 
-        public UsersController(IService<User> userService)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
         }
@@ -46,7 +45,7 @@ namespace CoreBank.Controllers
         public ActionResult Post(UserDto userDto)
         {
             var userFactory = new UserFactory(_userService);
-            var validationErrors = userFactory.Validate(userDto);
+            var validationErrors = userFactory.ValidateUserDto(userDto);
 
             if (validationErrors.Count <= 0)
             {
@@ -63,7 +62,7 @@ namespace CoreBank.Controllers
         public ActionResult Put(int id, UserDto userDto)
         {
             var userFactory = new UserFactory(_userService);
-            var validationErrors = userFactory.Validate(userDto);
+            var validationErrors = userFactory.ValidateUserDto(userDto);
 
             if (validationErrors.Count <= 0)
             {

@@ -4,15 +4,14 @@ using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CoreBank.Factories
 {
     public class UserFactory
     {
-        private readonly IService<User> _userService;
+        private readonly IUserService _userService;
 
-        public UserFactory(IService<User> userService)
+        public UserFactory(IUserService userService)
         {
             _userService = userService;
         }
@@ -31,14 +30,17 @@ namespace CoreBank.Factories
 
         public User UpdateUserModelFromDto(UserDto userDto, User user)
         {
-            user.AccountNumber = userDto.AccountNumber;
-            user.BankNumber = userDto.BankNumber;
-            user.Username = userDto.Username;
+            if (userDto.AccountNumber != 0)
+                user.AccountNumber = userDto.AccountNumber;
+            if (userDto.BankNumber != 0)
+                user.BankNumber = userDto.BankNumber;
+            if (!string.IsNullOrEmpty(userDto.Username))
+                user.Username = userDto.Username;
 
             return user;
         }
 
-        public List<string> Validate(UserDto userDto)
+        public List<string> ValidateUserDto(UserDto userDto)
         {
             var validationErrors = new List<string>();
 
@@ -48,7 +50,20 @@ namespace CoreBank.Factories
             if (userDto.AccountNumber.ToString().Length > 8)
                 validationErrors.Add("Account Number is too long.");
 
-            if (userDto.AccountNumber.ToString().StartsWith("0"))
+            if (userDto.AccountNumber != 0 && userDto.AccountNumber.ToString().StartsWith("0"))
+                validationErrors.Add("Account Number cannot start with 0");
+
+            return validationErrors;
+        }
+
+        public List<string> ValidateRequest(string accountNumber)
+        {
+            var validationErrors = new List<string>();
+
+            if (accountNumber.Length != 8)
+                validationErrors.Add("Account Number length is not valid.");
+            
+            if (accountNumber.StartsWith("0"))
                 validationErrors.Add("Account Number cannot start with 0");
 
             return validationErrors;

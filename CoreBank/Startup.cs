@@ -27,6 +27,7 @@ namespace CoreBank
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IService<>), typeof(Service<>));
             services.AddScoped<DbContext, MainDbContext>();
+            services.AddScoped<IUserService, UserService>();
 
             var connection = @"Server=RYAN\SQLEXPRESS01;Database=MainDb;User Id=test;Password=test;";
             services.AddDbContext<MainDbContext>(options => options.UseSqlServer(connection));
